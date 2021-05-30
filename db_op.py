@@ -2,6 +2,7 @@ import psycopg2
 import hash
 import pyperclip
 
+
 def create_user(usr, pwd):
     salt = hash.create_salt()
     password = hash.hash_password(salt, pwd)
@@ -17,8 +18,8 @@ def create_user(usr, pwd):
         print(error)
         exit()
 
-def login_user(usr, pwd):
 
+def login_user(usr, pwd):
     try:
         connection = connect()
         cursor = connection.cursor()
@@ -44,6 +45,7 @@ def login_user(usr, pwd):
         print(error)
         exit()
 
+
 def connect():
     usr = 'postgres'
     pwd = 'admin'
@@ -52,6 +54,7 @@ def connect():
         return connection
     except (Exception, psycopg2.Error) as error:
         print(error)
+
 
 def find_password(appname, usr):
     try:
@@ -65,12 +68,13 @@ def find_password(appname, usr):
         print('')
         print('Haslo skopiowane do schowka')
         print('')
-    
+
     except (Exception, psycopg2.Error) as error:
         print(error)
 
+
 def find_users(user_email, usr):
-    data = ('Password: ', 'Email: ', 'Username: ', 'url: ', 'App/Site name: ') 
+    data = ('Password: ', 'Email: ', 'Username: ', 'url: ', 'App/Site name: ')
     try:
         connection = connect()
         cursor = connection.cursor()
@@ -82,12 +86,13 @@ def find_users(user_email, usr):
         print('RESULT')
         print('')
         for row in result:
-            for i in range(0, len(row)-1):
+            for i in range(0, len(row) - 1):
                 print(data[i] + row[i])
         print('')
-        print('-'*30)
+        print('-' * 30)
     except (Exception, psycopg2.Error) as error:
         print(error)
+
 
 def store_password(password, user_email, url, appname, usr):
     try:
