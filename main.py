@@ -1,6 +1,9 @@
 import ui
-import hash
+import os
+from hash import private_key_from_txt
 import db_op
+from Crypto.PublicKey import RSA
+import base64
 # menu
 # 1. create new password for a site
 # 2. find password for a site
@@ -10,6 +13,15 @@ mode = input('Rejestracja(reg) czy wejscie(log)?:')
 
 username = input('Podaj imie uzytkownika: ')
 passw = input('Podaj master-haslo: ')
+
+try:
+    open("key_file.pem", 'r')
+except FileNotFoundError:
+    f = open("key_file.pem", 'wb')
+    new_key = RSA.generate(2048)
+    priv_key = new_key.exportKey("PEM")
+    f.write(priv_key)
+    f.close()
 
 if mode == 'reg':
     db_op.create_user(username, passw)
