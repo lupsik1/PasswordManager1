@@ -1,0 +1,16 @@
+-- Table: public.logins
+
+-- DROP TABLE public.logins;
+
+CREATE TABLE public.logins
+(
+    username text COLLATE pg_catalog."default" NOT NULL,
+    password text COLLATE pg_catalog."default" NOT NULL,
+    salt text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT logins_pkey PRIMARY KEY (username)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.logins
+    OWNER to postgres;
