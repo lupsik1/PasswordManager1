@@ -1,18 +1,16 @@
 import ui
 import os
-from hash import private_key_from_txt
+from hash import decrypt_rsa, encrypt_rsa, private_key_from_txt
 import db_op
 from Crypto.PublicKey import RSA
 import base64
+
 # menu
 # 1. create new password for a site
 # 2. find password for a site
 # 3. Find all sites connected to an email
 
 mode = input('Rejestracja(reg) czy wejscie(log)?:')
-
-username = input('Podaj imie uzytkownika: ')
-passw = input('Podaj master-haslo: ')
 
 try:
     open("key_file.pem", 'r')
@@ -22,6 +20,33 @@ except FileNotFoundError:
     priv_key = new_key.exportKey("PEM")
     f.write(priv_key)
     f.close()
+
+try:
+    log_info = open("login_file.bin", 'rb')
+    file = open("key_file.pem", "rb")
+    priv_key = private_key_from_txt(file.read())
+    log_info_decoded = decrypt_rsa(priv_key, log_info.read()).decode().splitlines()
+    username = log_info_decoded[0]
+    passw = log_info_decoded[1]
+    log_info.close()
+    file.close()
+
+except OSError:
+    username = input('Podaj imie uzytkownika: ')
+    passw = input('Podaj master-haslo: ')
+
+    log_info_uncoded = username+"\n"+passw
+    log_info = open("login_file.bin", 'wb')
+    file = open("key_file.pem", "rb")
+    priv_key = private_key_from_txt(file.read())
+    public_key = priv_key.publickey()
+    log_info.write(encrypt_rsa(log_info_uncoded, public_key))
+    log_info.close()
+
+
+
+
+
 
 if mode == 'reg':
     db_op.create_user(username, passw)

@@ -108,12 +108,9 @@ def store_password(password, user_email, url, appname, usr):
         file = open("key_file.pem", "rb")
         priv_key = private_key_from_txt(file.read())
         file.close()
-        print("file closed")
         public_key = priv_key.publickey()
-        print("public key created of type ", type(public_key))
 
         encrypted_password = encrypt_rsa(password, public_key)
-        print("ENCRYPTED:", encrypted_password)
 
         connection = connect()
         cursor = connection.cursor()
