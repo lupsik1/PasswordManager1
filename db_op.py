@@ -3,6 +3,7 @@ import base64
 import hash
 import pyperclip
 from hash import gen_password, decrypt_rsa, encrypt_rsa, private_key_from_txt
+from login_data import server_login
 
 
 def create_user(usr, pwd):
@@ -52,7 +53,7 @@ def connect():
     usr = 'postgres'
     pwd = 'admin'
     try:
-        connection = psycopg2.connect(user=usr, password=pwd, host='127.0.0.1', database='pass_mgr')
+        connection = psycopg2.connect(user=server_login['user'], password=server_login['password'], host=server_login['host'], database=server_login['database'])
         return connection
     except (Exception, psycopg2.Error) as error:
         print(error)
