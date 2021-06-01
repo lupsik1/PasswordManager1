@@ -37,7 +37,7 @@ def create(usr):
             print('Nie wpisales hasla!')
             psw = input('Wpisz swoje haslo')
     user_email = input('Wpisz maila wykorzystanego do rejestracji: ')
-    url = input('Wklej adres strony do ktorej tworzysz haslo: ')
+    url = input('Wklej adres strony do ktorej tworzysz haslo(z http:// na początku): ')
 
 
     store_password(psw, user_email, url, app_name, usr=usr)
