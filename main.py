@@ -1,19 +1,14 @@
 import ui
-import hash
+import os
+from hash import decrypt_rsa, encrypt_rsa, private_key_from_txt
 import db_op
-<<<<<<< Updated upstream
+from Crypto.PublicKey import RSA
+import base64
+
 # menu
 # 1. create new password for a site
 # 2. find password for a site
 # 3. Find all sites connected to an email
-
-mode = input('Rejestracja(reg) czy wejscie(log)?:')
-
-username = input('Podaj imie uzytkownika: ')
-passw = input('Podaj master-haslo: ')
-=======
-from Crypto.PublicKey import RSA
-import base64
 
 try:
     open("key_file.pem", 'r')
@@ -46,8 +41,8 @@ except OSError:
     log_info.write(encrypt_rsa(log_info_uncoded, public_key))
     log_info.close()
 
+
 mode = input('Rejestracja(reg) czy wejscie(log)?:')
->>>>>>> Stashed changes
 
 if mode == 'reg':
     db_op.create_user(username, passw)
@@ -68,7 +63,7 @@ while choice != 'Q':
     if choice == '1':
         ui.create(username)
     elif choice == '2':
-        ui.find_accounts(username)
+        ui.find_users(username)
     elif choice == '3':
         ui.find(username)
     else:

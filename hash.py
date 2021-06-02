@@ -1,5 +1,9 @@
 from hashlib import sha256
 import random
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+import base64
+
 
 def create_salt():
     ALPHABET = ('abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTYVWXYZ', '0123456789', '(,._-*~"<>/|!@#$%^&)+=')
@@ -7,15 +11,17 @@ def create_salt():
     chars = []
 
     while len(chars) < 5:
-        n = random.randint(0, len(ALPHABET)-1)
+        n = random.randint(0, len(ALPHABET) - 1)
         alpha = ALPHABET[n]
-        n = random.randint(0, len(alpha)-1)
+        n = random.randint(0, len(alpha) - 1)
         chars.append(alpha[n])
 
     return ''.join(chars)
-        
+
+
 def hash_password(salt, plaintext):
     return sha256((salt + plaintext).encode('utf-8')).hexdigest()
+
 
 def gen_password():
     length = random.randint(9, 18)
@@ -24,9 +30,25 @@ def gen_password():
     chars = []
 
     while len(chars) < length:
-        n = random.randint(0, len(ALPHABET)-1)
+        n = random.randint(0, len(ALPHABET) - 1)
         alpha = ALPHABET[n]
-        n = random.randint(0, len(alpha)-1)
+        n = random.randint(0, len(alpha) - 1)
         chars.append(alpha[n])
-
     return ''.join(chars)
+
+
+def encrypt_rsa(msg: str, public_key):
+    cipher_rsa = PKCS1_OAEP.new(public_key)
+    ret = cipher_rsa.encrypt(msg.encode('utf-8'))
+    return ret
+
+
+def decrypt_rsa(private_key, enc_msg):
+    enc_msg = enc_msg
+    cipher_rsa = PKCS1_OAEP.new(private_key)
+    ret = cipher_rsa.decrypt(enc_msg)
+    return ret
+
+
+def private_key_from_txt(text):
+    return RSA.importKey(text)
