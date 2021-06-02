@@ -63,10 +63,10 @@ while choice != 'Q':
     if choice == '1':
         ui.create(username)
     elif choice == '2':
-        ui.find_users(username)
+        db_op.find_users(username)
     elif choice == '3':
         ui.find(username)
-    else:
-        choice = ui.menu()
+    elif choice == '4':
+        ui.edit(username)
     choice = ui.menu()
 exit()

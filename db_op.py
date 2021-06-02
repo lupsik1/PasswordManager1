@@ -122,3 +122,44 @@ def store_password(password, user_email, url, appname, usr):
         connection.commit()
     except (Exception, psycopg2.Error) as error:
         print(error)
+
+def delete_record(usr, appname):
+    try:
+        connection = connect()
+        cursor = connection.cursor()
+        postgres_del_query = """ DELETE FROM accounts WHERE username = '""" + usr + """' AND appname = '""" + appname + "'"
+        cursor.execute(postgres_del_query)
+        connection.commit()
+    except (Exception, psycopg2.Error) as error:
+        print(error)
+
+def edit_record(usr, appname, wishes, password, email, url, new_name):
+    try:
+        connection = connect()
+        cursor = connection.cursor()
+        upd_clause = """ UPDATE accounts SET """
+        where_clause = """ WHERE username = '""" + usr + """' AND appname = '""" + appname + "'"
+        if(wishes[0]):
+            file = open("key_file.pem", "rb")
+            priv_key = private_key_from_txt(file.read())
+            file.close()
+            public_key = priv_key.publickey()
+            encrypted_password = encrypt_rsa(password, public_key)
+            #postgres_edit_query = upd_clause + """password ='""" + encrypted_password + "'" + where_clause
+            postgres_edit_query = upd_clause + """password = %s""" + where_clause
+            cursor.execute(postgres_edit_query, (encrypted_password,))
+            connection.commit()
+        if(wishes[1]):
+            postgres_edit_query = upd_clause + """user_email ='""" + email + "'" + where_clause
+            cursor.execute(postgres_edit_query)
+            connection.commit()
+        if(wishes[2]):
+            postgres_edit_query = upd_clause + """url ='""" + url + "'" + where_clause
+            cursor.execute(postgres_edit_query)
+            connection.commit()
+        if(wishes[3]):
+            postgres_edit_query = upd_clause + """appname ='""" + new_name + "'" + where_clause
+            cursor.execute(postgres_edit_query)
+            connection.commit()
+    except (Exception, psycopg2.Error) as error:
+        print(error)
