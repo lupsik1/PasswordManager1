@@ -69,23 +69,37 @@ def find_password(appname, usr):
     except (Exception, psycopg2.Error) as error:
         print(error)
 
+<<<<<<< Updated upstream
 def find_users(user_email, usr):
     data = ('Password: ', 'Email: ', 'Username: ', 'url: ', 'App/Site name: ') 
+=======
+
+def find_users(usr):
+    data = ('Password: ', 'Email: ', 'url: ', 'App/Site name: ')
+>>>>>>> Stashed changes
     try:
         connection = connect()
         cursor = connection.cursor()
-        postgres_select_query = """ SELECT * FROM accounts WHERE user_email = '""" + user_email + "'" + """ AND username = '""" + usr + "'"
-        cursor.execute(postgres_select_query, user_email)
+        postgres_select_query = """ SELECT user_email, url, appname FROM accounts WHERE username = '""" + usr + "'"
+        cursor.execute(postgres_select_query)
         connection.commit()
         result = cursor.fetchall()
         print('')
         print('RESULT')
         print('')
+        print('-'*30)
         for row in result:
+<<<<<<< Updated upstream
             for i in range(0, len(row)-1):
                 print(data[i] + row[i])
         print('')
         print('-'*30)
+=======
+            print(data[0] + '************')
+            for i in range(0, len(row)):
+                print(data[i+1] + row[i])
+            print('-'*30)
+>>>>>>> Stashed changes
     except (Exception, psycopg2.Error) as error:
         print(error)
 
