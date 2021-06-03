@@ -10,8 +10,6 @@ import base64
 # 2. find password for a site
 # 3. Find all sites connected to an email
 
-mode = input('Rejestracja(reg) czy wejscie(log)?:')
-
 try:
     open("key_file.pem", 'r')
 except FileNotFoundError:
@@ -44,9 +42,7 @@ except OSError:
     log_info.close()
 
 
-
-
-
+mode = input('Rejestracja(reg) czy wejscie(log)?:')
 
 if mode == 'reg':
     db_op.create_user(username, passw)
@@ -67,10 +63,10 @@ while choice != 'Q':
     if choice == '1':
         ui.create(username)
     elif choice == '2':
-        ui.find_accounts(username)
+        db_op.find_users(username)
     elif choice == '3':
         ui.find(username)
-    else:
-        choice = ui.menu()
+    elif choice == '4':
+        ui.edit(username)
     choice = ui.menu()
 exit()

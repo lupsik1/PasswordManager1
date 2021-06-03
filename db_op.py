@@ -81,24 +81,25 @@ def find_password(appname, usr):
     except (Exception, psycopg2.Error) as error:
         print(error)
 
-
-def find_users(user_email, usr):
-    data = ('Password: ', 'Email: ', 'Username: ', 'url: ', 'App/Site name: ')
+def find_users(usr):
+    data = ('Password: ', 'Email: ', 'url: ', 'App/Site name: ')
     try:
         connection = connect()
         cursor = connection.cursor()
-        postgres_select_query = """ SELECT * FROM accounts WHERE user_email = '""" + user_email + "'" + """ AND username = '""" + usr + "'"
-        cursor.execute(postgres_select_query, user_email)
+        postgres_select_query = """ SELECT user_email, url, appname FROM accounts WHERE username = '""" + usr + "'"
+        cursor.execute(postgres_select_query)
         connection.commit()
         result = cursor.fetchall()
         print('')
         print('RESULT')
         print('')
+        print('-'*30)
         for row in result:
-            for i in range(0, len(row) - 1):
-                print(data[i] + row[i])
-        print('')
-        print('-' * 30)
+            print(data[0] + '************')
+            for i in range(0, len(row)):
+                print(data[i+1] + row[i])
+            print('-'*30)
+
     except (Exception, psycopg2.Error) as error:
         print(error)
 
@@ -119,5 +120,46 @@ def store_password(password, user_email, url, appname, usr):
         record_to_insert = (encrypted_password, user_email, usr, url, appname)
         cursor.execute(postgres_insert_query, record_to_insert)
         connection.commit()
+    except (Exception, psycopg2.Error) as error:
+        print(error)
+
+def delete_record(usr, appname):
+    try:
+        connection = connect()
+        cursor = connection.cursor()
+        postgres_del_query = """ DELETE FROM accounts WHERE username = '""" + usr + """' AND appname = '""" + appname + "'"
+        cursor.execute(postgres_del_query)
+        connection.commit()
+    except (Exception, psycopg2.Error) as error:
+        print(error)
+
+def edit_record(usr, appname, wishes, password, email, url, new_name):
+    try:
+        connection = connect()
+        cursor = connection.cursor()
+        upd_clause = """ UPDATE accounts SET """
+        where_clause = """ WHERE username = '""" + usr + """' AND appname = '""" + appname + "'"
+        if(wishes[0]):
+            file = open("key_file.pem", "rb")
+            priv_key = private_key_from_txt(file.read())
+            file.close()
+            public_key = priv_key.publickey()
+            encrypted_password = encrypt_rsa(password, public_key)
+            #postgres_edit_query = upd_clause + """password ='""" + encrypted_password + "'" + where_clause
+            postgres_edit_query = upd_clause + """password = %s""" + where_clause
+            cursor.execute(postgres_edit_query, (encrypted_password,))
+            connection.commit()
+        if(wishes[1]):
+            postgres_edit_query = upd_clause + """user_email ='""" + email + "'" + where_clause
+            cursor.execute(postgres_edit_query)
+            connection.commit()
+        if(wishes[2]):
+            postgres_edit_query = upd_clause + """url ='""" + url + "'" + where_clause
+            cursor.execute(postgres_edit_query)
+            connection.commit()
+        if(wishes[3]):
+            postgres_edit_query = upd_clause + """appname ='""" + new_name + "'" + where_clause
+            cursor.execute(postgres_edit_query)
+            connection.commit()
     except (Exception, psycopg2.Error) as error:
         print(error)
