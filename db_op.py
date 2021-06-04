@@ -7,6 +7,7 @@ from login_data import server_login
 import keyboard
 import pyautogui, time
 
+
 def create_user(usr, pwd):
     salt = hash.create_salt()
     password = hash.hash_password(salt, pwd)
@@ -54,7 +55,8 @@ def connect():
     usr = 'postgres'
     pwd = 'admin'
     try:
-        connection = psycopg2.connect(user=server_login['user'], password=server_login['password'], host=server_login['host'], database=server_login['database'])
+        connection = psycopg2.connect(user=server_login['user'], password=server_login['password'],
+                                      host=server_login['host'], database=server_login['database'])
         return connection
     except (Exception, psycopg2.Error) as error:
         print(error)
@@ -80,15 +82,16 @@ def find_password(appname, usr):
         pyautogui.press('tab')
         time.sleep(.2)
         pyautogui.keyUp('alt')
-        keyboard.write(result[1])
+        keyboard.write(result[1], delay=0.03)
         keyboard.press_and_release('tab')
-        keyboard.write(decoded_result.decode())
+        keyboard.write(decoded_result.decode(), delay=0.03)
         print('')
         print('Haslo skopiowane do schowka')
         print('')
 
     except (Exception, psycopg2.Error) as error:
         print(error)
+
 
 def find_users(usr):
     data = ('Password: ', 'Email: ', 'url: ', 'App/Site name: ')
@@ -102,12 +105,12 @@ def find_users(usr):
         print('')
         print('RESULT')
         print('')
-        print('-'*30)
+        print('-' * 30)
         for row in result:
             print(data[0] + '************')
             for i in range(0, len(row)):
-                print(data[i+1] + row[i])
-            print('-'*30)
+                print(data[i + 1] + row[i])
+            print('-' * 30)
 
     except (Exception, psycopg2.Error) as error:
         print(error)
@@ -132,6 +135,7 @@ def store_password(password, user_email, url, appname, usr):
     except (Exception, psycopg2.Error) as error:
         print(error)
 
+
 def delete_record(usr, appname):
     try:
         connection = connect()
@@ -142,13 +146,14 @@ def delete_record(usr, appname):
     except (Exception, psycopg2.Error) as error:
         print(error)
 
+
 def edit_record(usr, appname, wishes, password, email, url, new_name):
     try:
         connection = connect()
         cursor = connection.cursor()
         upd_clause = """ UPDATE accounts SET """
         where_clause = """ WHERE username = '""" + usr + """' AND appname = '""" + appname + "'"
-        if(wishes[0]):
+        if (wishes[0]):
             file = open("key_file.pem", "rb")
             priv_key = private_key_from_txt(file.read())
             file.close()
@@ -157,15 +162,15 @@ def edit_record(usr, appname, wishes, password, email, url, new_name):
             postgres_edit_query = upd_clause + """password = %s""" + where_clause
             cursor.execute(postgres_edit_query, (encrypted_password,))
             connection.commit()
-        if(wishes[1]):
+        if (wishes[1]):
             postgres_edit_query = upd_clause + """user_email ='""" + email + "'" + where_clause
             cursor.execute(postgres_edit_query)
             connection.commit()
-        if(wishes[2]):
+        if (wishes[2]):
             postgres_edit_query = upd_clause + """url ='""" + url + "'" + where_clause
             cursor.execute(postgres_edit_query)
             connection.commit()
-        if(wishes[3]):
+        if (wishes[3]):
             postgres_edit_query = upd_clause + """appname ='""" + new_name + "'" + where_clause
             cursor.execute(postgres_edit_query)
             connection.commit()
