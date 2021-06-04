@@ -4,7 +4,8 @@ import hash
 import pyperclip
 from hash import gen_password, decrypt_rsa, encrypt_rsa, private_key_from_txt
 from login_data import server_login
-
+import keyboard
+import pyautogui, time
 
 def create_user(usr, pwd):
     salt = hash.create_salt()
@@ -74,6 +75,14 @@ def find_password(appname, usr):
         decoded_result = decrypt_rsa(priv_key, result[0])
         pyperclip.copy(decoded_result.decode())
 
+        pyautogui.keyDown('alt')
+        time.sleep(.2)
+        pyautogui.press('tab')
+        time.sleep(.2)
+        pyautogui.keyUp('alt')
+        keyboard.write("NAZWAUZYTKOWNIKA")
+        keyboard.press_and_release('tab')
+        keyboard.write(decoded_result.decode())
         print('')
         print('Haslo skopiowane do schowka')
         print('')
