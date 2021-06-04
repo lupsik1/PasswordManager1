@@ -80,7 +80,7 @@ def find_password(appname, usr):
         pyautogui.press('tab')
         time.sleep(.2)
         pyautogui.keyUp('alt')
-        keyboard.write("NAZWAUZYTKOWNIKA")
+        keyboard.write("NAZWAUZYTKOWNIKA") # TU WARTOŚć email z bazy
         keyboard.press_and_release('tab')
         keyboard.write(decoded_result.decode())
         print('')
