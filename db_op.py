@@ -64,7 +64,7 @@ def find_password(appname, usr):
     try:
         connection = connect()
         cursor = connection.cursor()
-        postgres_select_query = """SELECT password FROM accounts WHERE appname = '""" + appname + """' AND username = '""" + usr + "'"
+        postgres_select_query = """SELECT password, user_email FROM accounts WHERE appname = '""" + appname + """' AND username = '""" + usr + "'"
         cursor.execute(postgres_select_query)
         connection.commit()
         result = cursor.fetchone()
@@ -80,7 +80,7 @@ def find_password(appname, usr):
         pyautogui.press('tab')
         time.sleep(.2)
         pyautogui.keyUp('alt')
-        keyboard.write("NAZWAUZYTKOWNIKA") # TU WARTOŚć email z bazy
+        keyboard.write(result[1])
         keyboard.press_and_release('tab')
         keyboard.write(decoded_result.decode())
         print('')
@@ -154,7 +154,6 @@ def edit_record(usr, appname, wishes, password, email, url, new_name):
             file.close()
             public_key = priv_key.publickey()
             encrypted_password = encrypt_rsa(password, public_key)
-            #postgres_edit_query = upd_clause + """password ='""" + encrypted_password + "'" + where_clause
             postgres_edit_query = upd_clause + """password = %s""" + where_clause
             cursor.execute(postgres_edit_query, (encrypted_password,))
             connection.commit()
